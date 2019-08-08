@@ -27,9 +27,8 @@ export default class UserRepository {
     password: string,
     phoneNumber: string,
   ) => {
-    const repo = new UserRepository();
     const user = {
-      ...(await repo.getUserById(id)),
+      ...(await UserRepository.getUserById(id)),
       email,
       password,
       phoneNumber,
@@ -56,11 +55,11 @@ export default class UserRepository {
     return UserRepository.users.findIndex((user) => user.email === email);
   }
 
-  public getAllUsers = async (): Promise<User[]> => {
+  public static getAllUsers = async (): Promise<User[]> => {
     return new Promise<User[]>((resolve) => resolve(UserRepository.users));
   }
 
-  public getUserById = async (id: number): Promise<User> => {
+  public static getUserById = async (id: number): Promise<User> => {
     const userIndex = UserRepository.getUserIndexById(id);
     return new Promise<User>((resolve) =>
       resolve(UserRepository.users[userIndex]),

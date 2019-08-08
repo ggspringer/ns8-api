@@ -12,28 +12,46 @@ app.get("/events", async (req: express.Request, res: express.Response) => {
   res.send(events);
 });
 
+app.get(
+  "/users/:id/events",
+  async (req: express.Request, res: express.Response) => {
+    const { userId } = req.params;
+    const events = await EventRepository.getEventsByUserId(userId);
+    res.send(events);
+  },
+);
+
+app.get(
+  "/users/:id/events/recent",
+  async (req: express.Request, res: express.Response) => {
+    const { userId } = req.params;
+    let userEvents = await EventRepository.getEventsByUserId(userId);
+
+    const yesterday = ((new Date().getTime()) - (24 * 60 * 60 * 1000));
+    userEvents = userEvents.filter((event) => event.utcDate >= yesterday);
+
+    res.send(userEvents);
+  },
+);
+
 app.post(
   "/users/:id/events",
   async (req: express.Request, res: express.Response) => {
-    const { type } = req.body;
+    const { type, created } = req.body;
     const { userId } = req.params;
 
-    const event = EventRepository.create(userId, type, new Date());
-    res.send(event);
+    const event = EventRepository.create(userId, type, created || new Date().getTime());
+    res.status(201).send(event);
   },
 );
 
 app.get("/users", async (req: express.Request, res: express.Response) => {
-  const repo = new UserRepository();
-  const users = await repo.getAllUsers();
-
+  const users = await UserRepository.getAllUsers();
   res.send(users);
 });
 
 app.get("/users/:id", async (req: express.Request, res: express.Response) => {
-  const repo = new UserRepository();
-  const user = await repo.getUserById(Number(req.params.id));
-
+  const user = await UserRepository.getUserById(Number(req.params.id));
   res.send(user);
 });
 
