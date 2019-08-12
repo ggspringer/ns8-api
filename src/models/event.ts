@@ -3,6 +3,6 @@ export default class Event {
     public id: number,
     public userId: number,
     public type: string,
-    public utcDate: number,
+    public created: number,
   ) {}
 }

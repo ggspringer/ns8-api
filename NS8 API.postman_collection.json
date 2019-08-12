@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "63945edd-c877-4b02-a04c-fccc377f70e0",
+		"_postman_id": "2a1502b5-ef8f-4da3-8dc9-7171d1004a04",
 		"name": "NS8 API",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -68,6 +68,20 @@
 		},
 		{
 			"name": "Create User 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "28936644-e25d-4075-8241-896dd58a2663",
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [
@@ -98,6 +112,25 @@
 		},
 		{
 			"name": "Get All Users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f74de323-0478-446b-9b08-725724c38ea5",
+						"exec": [
+							"pm.test(\"Status Code should be 200\", () => {",
+							"     pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"User count should be 2\", () => {",
+							"    const json = pm.response.json();",
+							"    pm.expect(json.length).to.eql(2);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "GET",
 				"header": [],
@@ -116,6 +149,46 @@
 		},
 		{
 			"name": "Add Event, User 0",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "34fc7df4-42a4-4888-9693-347f05402cff",
+						"exec": [
+							"pm.test(\"Status Code Should be 201\", () => {",
+							" pm.response.to.have.status(201);",
+							"})",
+							"",
+							"pm.test(\"Should have 4 properties\", () => {",
+							"    const json = pm.response.json();",
+							"    pm.expect(Object.keys(json).length).to.eql(4);",
+							"});",
+							"",
+							"pm.test(\"id should be 0\", () => {",
+							"    const json = pm.response.json();",
+							"    pm.expect(json.id).to.eql(0);",
+							"});",
+							"",
+							"pm.test(\"userId should be 0\", () => {",
+							"    const json = pm.response.json();",
+							"    pm.expect(json.userId).to.eql(0);",
+							"});",
+							"",
+							"pm.test(\"type should be LOGIN\", () => {",
+							"    const json = pm.response.json();",
+							"    pm.expect(json.type).to.eql(\"LOGIN\");",
+							"});",
+							"",
+							"pm.test(\"utcDate should be a number\", () => {",
+							"    const json = pm.response.json();",
+							"    pm.expect(isNaN(json.created)).to.eql(false);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [
@@ -139,6 +212,216 @@
 					"path": [
 						"users",
 						"0",
+						"events"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Event 2, User 0",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "789c3eaf-c2a1-44fa-9043-5e49b64e94bd",
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"type\": \"LOGIN\"\r\n}"
+				},
+				"url": {
+					"raw": "localhost:5000/users/0/events",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"users",
+						"0",
+						"events"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Event 3, User 0, Historic",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "554e8d44-0688-409a-a11b-956ea3208b8f",
+						"exec": [
+							"pm.globals.set(\"yesterday\", Number(((new Date().getTime()) - (48 * 60 * 60 * 1000))));",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "96b05327-3430-4004-a1b1-b360c4232cdd",
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"type\": \"LOGIN\",\r\n\t\"created\": \"{{yesterday}}\"\r\n}"
+				},
+				"url": {
+					"raw": "localhost:5000/users/0/events",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"users",
+						"0",
+						"events"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Recent Events for User 0",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9311295a-6d82-4b27-9043-24243aec6c47",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Events length is 2\", () => {",
+							"     var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.length).to.eql(2); ",
+							"});",
+							"",
+							"pm.test(\"UserId should be 0\", () => {",
+							"    const json = pm.response.json();",
+							"    pm.expect(json[0].userId).to.eql(0);",
+							"    pm.expect(json[1].userId).to.eql(0);",
+							"});",
+							"",
+							"pm.test(\"type should be LOGIN\", () => {",
+							"    const json = pm.response.json();",
+							"    pm.expect(json[0].type).to.eql(\"LOGIN\");",
+							"    pm.expect(json[1].type).to.eql(\"LOGIN\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/users/0/events/recent",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"users",
+						"0",
+						"events",
+						"recent"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Events for a User 0",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7beceb8d-7d8c-42fa-8ed7-efc7996bff8b",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Event count should be 3\", () => {",
+							"    const json = pm.response.json();",
+							"    pm.expect(json.length).to.eql(3);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/users/0/events",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"users",
+						"0",
+						"events"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Events",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:5000/events",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
 						"events"
 					]
 				}
